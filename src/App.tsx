@@ -321,6 +321,38 @@ export default function App() {
           (mobileLinks[i] as HTMLElement).onclick = closeMenu;
         }
 
+        const showSection = (id: string) => {
+          const sections = ['beranda', 'tentang', 'gallery', 'contact'];
+          sections.forEach(secId => {
+            const el = document.getElementById(secId);
+            if (el) {
+              if (secId === id) {
+                el.style.display = 'block';
+              } else {
+                el.style.display = 'none';
+              }
+            }
+          });
+
+          // Style the active link in desktop and mobile menu
+          const anchors = document.querySelectorAll('a[href^="#"]');
+          anchors.forEach(anch => {
+            const href = anch.getAttribute('href');
+            if (href === `#${id}`) {
+              anch.classList.add('active-tab');
+              (anch as HTMLElement).style.color = '#2563eb';
+              (anch as HTMLElement).style.borderBottomColor = '#2563eb';
+            } else if (href && href.startsWith('#')) {
+              anch.classList.remove('active-tab');
+              (anch as HTMLElement).style.color = '';
+              (anch as HTMLElement).style.borderBottomColor = 'transparent';
+            }
+          });
+        };
+
+        // Show beranda section by default on load
+        showSection('beranda');
+
         const anchors = document.querySelectorAll('a[href^="#"]');
         for (let j = 0; j < anchors.length; j++) {
           const anchor = anchors[j] as HTMLElement;
@@ -328,10 +360,14 @@ export default function App() {
             const href = anchor.getAttribute('href');
             if (href === '#') return;
             e.preventDefault();
-            const target = document.querySelector(href || '');
-            if (target) target.scrollIntoView({
-              behavior: 'smooth'
-            });
+            const targetId = href ? href.substring(1) : '';
+            if (targetId) {
+              showSection(targetId);
+              window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+              });
+            }
           };
         }
       }
